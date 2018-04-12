@@ -3,17 +3,24 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var TweetSchema = new Schema({
+	screen_name: {
+		type: String
+	},
 	tweet: [{
 		text: {
-			type: String,
-			required: true
+			type: String
 		}
 	}],
 	following: [{
+		type: String
+	}],
+	followingDetails: [{
 		screen_name: {
-			type: String,
-			required: true
-		}
+			type: String
+		},
+		tweets: [{
+			type: String
+		}]
 	}]
 }, {
 	timestamps: true

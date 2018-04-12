@@ -5,7 +5,8 @@ var config = require('../../config');
 
 var api = express.Router();
 
-api.get('/', tweet.getTweets);
-api.get('/following', tweet.getFollowing);
+api.get('/getTweets/:screenName', tweet.getTweets);
+api.get('/following/:screenName', tweet.getFollowing);
+api.get('/saveHeroTweets/:screenName', tweet.saveHeroTweets);
 
 module.exports = api;
