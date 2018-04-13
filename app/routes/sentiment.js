@@ -25,10 +25,14 @@ api.calAvgSent = function(req, res, next) {
 			sum += sentiment(twt.text).score;
 			count++;
 		});
+
+		let scoreFirst = sentiment(tweet.tweet[0].text).score;
+
 		console.log(sum,count);
 		let score = sum/count;
 		return res.status(200).json({
-			score: score
+			'Average Score': score,
+			'Latest Tweet Score': scoreFirst
 		});
 	});
 };
