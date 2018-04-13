@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var config = require('./config');
 var mongoose = require('mongoose');
+const path = require('path');
 var app = express();
 
 var options = {
@@ -29,8 +30,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-// app.use(express.static(path.join(__dirname, 'public')))
-;
+app.use(express.static(path.join(__dirname, 'public')));
 var api = require('./app/routes/api');
 app.use('/api', api);
 
