@@ -9,5 +9,6 @@ api.get('/getTweets/:screenName', tweet.getTweets);
 api.get('/calculateSentiment/:screenName', sentiment.calAvgSent);
 api.get('/following/:screenName', tweet.getFollowing);
 api.get('/saveHeroTweets/:screenName', tweet.saveHeroTweets);
+api.get('/calAvgSent/:screenName', tweet.calAvgSent);
 
 module.exports = api;

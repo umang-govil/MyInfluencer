@@ -30,7 +30,12 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+<<<<<<< b5a71cbbef4dd33c7dea6888878678f34fe7f04d
 app.use(express.static(path.join(__dirname, 'public')));
+=======
+// app.use(express.static(path.join(__dirname, 'public')))
+
+>>>>>>> added avg sentiment of hero tweets api
 var api = require('./app/routes/api');
 app.use('/api', api);
 
