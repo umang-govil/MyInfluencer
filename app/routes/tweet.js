@@ -150,7 +150,4 @@ api.saveHeroTweets = function(req, res, next) {
 	});
 };
 
-api.calAvgSent = function(req, res, next) {
-
-};
 module.exports = api;
