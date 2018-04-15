@@ -4,7 +4,7 @@ var Tweet = require('../models/tweetSchema');
 var api = express.Router();
 var config = require('../../config');
 
-api.calAvgSent = function(req, res, next) {
+api.calAvgSentUser = function(req, res, next) {
 	var screenName = req.params.screenName;
 	Tweet.findOne({screen_name: screenName}, function(err, tweet) {
 		if(err){
@@ -34,6 +34,40 @@ api.calAvgSent = function(req, res, next) {
 			'Average Score': score,
 			'Latest Tweet Score': scoreFirst
 		});
+	});
+};
+
+api.calAvgSentHero = function(req, res, next) {
+	var screenName = req.params.screenName;
+	var sentScore = 0;
+	var count = 0;
+
+	Tweet.findOne({
+		screen_name: screenName
+	}, function(err, tweet) {
+		if (err) throw err;
+		else if (!tweet) {
+			res.status(500).send({
+				err: err
+			});
+		} else {
+			tweet.followingDetails.forEach(function(followUser) {
+				console.log(followUser.screen_name);
+				followUser.tweets.forEach(function(herotweet) {
+					var sent = sentiment(herotweet);
+					sentScore += sent.score;
+					count++;
+				});
+				if (count > 0) {
+					console.log(sentScore / count);
+				} else {
+					console.log(count);
+				}
+			});
+			res.status(200).send({
+				message: 'calculated Average Sentiment'
+			});
+		}
 	});
 };
 

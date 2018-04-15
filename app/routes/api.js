@@ -5,10 +5,10 @@ var config = require('../../config');
 
 var api = express.Router();
 
-api.get('/getTweets/:screenName', tweet.getTweets);
-api.get('/calculateSentiment/:screenName', sentiment.calAvgSent);
+api.get('/calculateSentiment/user/:screenName', sentiment.calAvgSentUser);
+api.get('/calculateSentiment/hero/:screenName', sentiment.calAvgSentHero);
 api.get('/following/:screenName', tweet.getFollowing);
+api.get('/getTweets/:screenName', tweet.getTweets);
 api.get('/saveHeroTweets/:screenName', tweet.saveHeroTweets);
-api.get('/calAvgSent/:screenName', tweet.calAvgSent);
 
 module.exports = api;
