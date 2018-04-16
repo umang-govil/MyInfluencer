@@ -2,7 +2,6 @@ var express = require('express');
 var sentiment = require('sentiment');
 var Tweet = require('../models/tweetSchema');
 var api = express.Router();
-var config = require('../../config');
 
 api.calAvgSentUser = function(req, res, next) {
 	var screenName = req.params.screenName;
