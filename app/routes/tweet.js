@@ -92,7 +92,6 @@ api.getFollowing = function(req, res, next) {
 };
 
 api.saveHeroTweets = function(req, res, next) {
-
 	var screenName = req.params.screenName;
 	var heroTweets = [];
 
@@ -111,10 +110,12 @@ api.saveHeroTweets = function(req, res, next) {
 					exclude_replies: true
 				}, function(error, tweets, response) {
 					if (!error) {
+						heroTweets = [];
 						var date = new Date();
 						tweets.forEach(function(tweet) {
 							var createdDate = new Date(tweet.created_at);
 							if ((createdDate.getHours() - date.getHours()) == 1) {
+								console.log(tweet.text);
 								heroTweets.push(tweet.text);
 							}
 						});
