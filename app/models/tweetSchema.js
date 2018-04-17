@@ -9,6 +9,9 @@ var TweetSchema = new Schema({
 	tweet: [{
 		text: {
 			type: String
+		},
+		created_at: {
+			type: Date
 		}
 	}],
 	following: [{
