@@ -80,27 +80,17 @@ function heroAnalysis(screenName){
 						var sent = sentiment(herotweet);
 						sentScore += sent.score;
 						count++;
-						function cal(){
-							return new Promise(function(resolve, reject) {
-								tweetMatch(herotweet).then(function(value){
-									if(max < value){
-										max = value;
-										bestMatch[followUser.screen_name] = {'tweet': herotweet, 'confidence': value};
-										tweetSentimentHero[followUser.screen_name] = sent.score;
-									}
-									resolve(1);	
-								});
-							});
-						}
+						tweetMatch(herotweet).then(function(value){
+							if(max < value){
+								max = value;
+								bestMatch[followUser.screen_name] = {'tweet': herotweet, 'confidence': value};
+								tweetSentimentHero[followUser.screen_name] = sent.score;
+							}	
+						});
 					});
 					if (count > 0) {
 						//console.log(sentScore / count);
 						averageSentimentHero[followUser.screen_name] = sentScore/count;
-						let rawInfluence = (tweetSentimentHero[followUser.screen_name]);
-						influence[followUser.screen_name] = {
-							'raw': rawInfluence,
-							// 'normalized': rawInfluence*bestMatch[followUser.screen_name]
-						}
 					}
 				});
 				console.log('calculated Average Sentiment');
@@ -113,6 +103,13 @@ function heroAnalysis(screenName){
 api.result = function(req, res, next) {
 	userAnalysis(req.params.screenName).then(() => {
 		heroAnalysis(req.params.screenName).then(() => {
+			for(var i in tweetSentimentHero){
+				let rawData = (tweetSentimentUser - averageSentimentUser)/(tweetSentimentHero[i] - averageSentimentHero[i]);
+				influence[i] = {
+					'raw': rawData,
+					'normalized': rawData*(bestMatch[i])['confidence']
+				}
+			}
 			res.status(200).send({
 				'Average User Sentiment': averageSentimentUser,
 				'Average Hero Sentiment':averageSentimentHero,
