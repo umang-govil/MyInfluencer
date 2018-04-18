@@ -30,7 +30,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+	req.headers['if-none-match'] = 'no-match-for-this';
+	next();    
+});
+
+app.use(express.static(path.join(__dirname, 'public'),{
+	maxAge: 0
+}));
 
 var api = require('./app/routes/api');
 app.use('/api', api);
