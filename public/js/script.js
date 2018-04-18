@@ -28,12 +28,31 @@ function storeData(userName){
     });
 }
 
+let analysis = '';
+
+function getResult(userName){
+    return new Promise(function(resolve, reject) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                analysis = xhttp.responseText;
+                resolve(1);
+            }
+        };
+        xhttp.open("GET", "api/result/"+userName, true);
+        xhttp.send();
+    });
+}
+
 function execute(){
     let userName = document.getElementById('twitterHandle').value;
     let result = document.getElementById('result');
     if(userName != ''){
         storeData(userName).then(() => {
-            result.innerHTML += "<div class='notification is-success'>Result Stored Successfully!</div>";
+            result.innerHTML = "<div class='notification is-success'>Result Stored Successfully!</div>";
+            getResult(userName).then(() => {
+                result.innerHTML += "<div class='box'>"+analysis+"</div>";
+            });
         });
     } else {
         window.alert("The Twitter Handle Field is Emtpy")
