@@ -6,6 +6,9 @@ var TweetSchema = new Schema({
 	screen_name: {
 		type: String
 	},
+	image_url: {
+		type: String
+	},
 	tweet: [{
 		text: {
 			type: String

@@ -22,19 +22,22 @@ api.getTweets = function(req, res, next) {
 
 	client.get('statuses/user_timeline', {
 		screen_name: screenName,
-		count: 25,
+		count: 50,
 		exclude_replies: true
 	}, function(error, tweets, response) {
+		var image_url = tweets[0].user.profile_image_url;
 		if (!error) {
 			tweets.forEach(function(tweet) {
 				tweetArray.push({
-					text: tweet.text
+					text: tweet.text,
+					created_at: tweet.created_at
 				});
 			});
 
 			var allTweets = new Tweet({
 				tweet: tweetArray,
-				screen_name: screenName
+				screen_name: screenName,
+				image_url: image_url
 			});
 
 			allTweets.save(function(err, data) {
@@ -47,6 +50,7 @@ api.getTweets = function(req, res, next) {
 					res.status(200).json({
 						message: "Tweets saved successfully !"
 					});
+					tweetArray = [];
 				}
 			});
 
@@ -64,7 +68,7 @@ api.getFollowing = function(req, res, next) {
 
 	client.get('friends/list', {
 		screen_name: screenName,
-		count: 10
+		count: 50
 	}, function(err, data, response) {
 		if (!err) {
 
@@ -91,9 +95,60 @@ api.getFollowing = function(req, res, next) {
 	});
 };
 
-api.saveHeroTweets = function(req, res, next) {
-	var screenName = req.params.screenName;
+function saveFollow(tweet, createdDate, screenName) {
 	var heroTweets = [];
+	return new Promise(function(resolve, reject) {
+		tweet.following.forEach(function(follow) {
+			client.get('statuses/user_timeline', {
+				screen_name: follow,
+				exclude_replies: true
+			}, function(error, tweets, response) {
+				if (!error) {
+					var date = new Date(createdDate);
+					tweets.forEach(function(tweet) {
+						var thisCreatedDate = new Date(tweet.created_at);
+
+						var dateDiff = thisCreatedDate.getHours() - date.getHours();
+
+						if (0 < dateDiff <= 5 && thisCreatedDate.getDate() == date.getDate()) {
+
+							heroTweets.push(tweet.text);
+						}
+					});
+					Tweet.findOne({
+						screen_name: screenName
+					}, function(err, tweet) {
+						if (err) throw err;
+						else if (!tweet) {
+							res.status(500).send({
+								err: err
+							});
+						} else {
+							if (heroTweets.length === 0) {} else {
+								tweet.followingDetails.push({
+									screen_name: follow,
+									tweets: heroTweets
+								});
+								tweet.save(function(err) {
+									if (err) throw err;
+								});
+								heroTweets = [];
+							}
+						}
+					});
+				} else {
+					console.log(error);
+				}
+			});
+		});
+		resolve(1);
+	});
+}
+
+
+api.saveHeroTweets = function(req, res, next) {
+
+	var screenName = req.params.screenName;
 
 	Tweet.findOne({
 		screen_name: screenName
@@ -104,48 +159,46 @@ api.saveHeroTweets = function(req, res, next) {
 				err: err
 			});
 		} else {
-			tweet.following.forEach(function(follow) {
-				client.get('statuses/user_timeline', {
-					screen_name: follow,
-					exclude_replies: true
-				}, function(error, tweets, response) {
-					if (!error) {
-						heroTweets = [];
-						var date = new Date();
-						tweets.forEach(function(tweet) {
-							var createdDate = new Date(tweet.created_at);
-							if ((createdDate.getHours() - date.getHours()) == 1) {
-								console.log(tweet.text);
-								heroTweets.push(tweet.text);
-							}
-						});
-						Tweet.findOne({
-							screen_name: screenName
-						}, function(err, tweet) {
-							if (err) throw err;
-							else if (!tweet) {
-								res.status(500).send({
-									err: err
-								});
-							} else {
-								tweet.followingDetails.push({
-									screen_name: follow,
-									tweets: heroTweets
-								});
-								tweet.save(function(err) {
-									if (err) throw err;
-								});
-							}
-						});
-					} else {
-						res.status(500).json({
-							error: error
-						});
-					}
+
+			var createdDate = tweet.tweet[0].created_at;
+			saveFollow(tweet, createdDate, screenName).then(function() {
+				res.status(200).send({
+					message: 'saved hero tweets in db'
 				});
 			});
+		}
+	});
+};
+
+api.calAvgSent = function(req, res, next) {
+	var screenName = req.params.screenName;
+	var sentScore = 0;
+	var count = 0;
+
+	Tweet.findOne({
+		screen_name: screenName
+	}, function(err, tweet) {
+		if (err) throw err;
+		else if (!tweet) {
+			res.status(500).send({
+				err: err
+			});
+		} else {
+			tweet.followingDetails.forEach(function(followUser) {
+				console.log(followUser.screen_name);
+				followUser.tweets.forEach(function(herotweet) {
+					var sent = sentiment(herotweet);
+					sentScore += sent.score;
+					count++;
+				});
+				if (count > 0) {
+					console.log(sentScore / count);
+				} else {
+					console.log(count);
+				}
+			});
 			res.status(200).send({
-				message: 'saved hero tweets in db'
+				message: 'calculated Average Sentiment'
 			});
 		}
 	});
