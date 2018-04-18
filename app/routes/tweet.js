@@ -68,7 +68,7 @@ api.getFollowing = function(req, res, next) {
 
 	client.get('friends/list', {
 		screen_name: screenName,
-		count: 50
+		count: 150
 	}, function(err, data, response) {
 		if (!err) {
 
