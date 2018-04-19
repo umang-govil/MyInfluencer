@@ -68,70 +68,103 @@ function createChart(analysis) {
 	var box = document.getElementById('chart');
 	box.style.display = 'block';
 
-	var data = {
-		labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-		series: [
-			[],
-			[]
-		]
-	};
+	var dataLabels = [];
+	var avgHeroSent = [];
+	var heroSent = [];
 
-	data.labels = [];
 	analysis = JSON.parse(analysis);
-	// console.log(analysis['Average Hero Sentiment']);
 	for (var i in analysis['Average Hero Sentiment']) {
 		console.log(i);
 		console.log(analysis['Average Hero Sentiment'][i]);
-		data.labels.push(i);
-		data.series[0].push(analysis['Average Hero Sentiment'][i]);
-		data.series[1].push(analysis['Hero Tweet Sentiment'][i]);
+		dataLabels.push(i);
+		avgHeroSent.push(analysis['Average Hero Sentiment'][i]);
+		heroSent.push(analysis['Hero Tweet Sentiment'][i]);
 	}
 
-	var options = {
-		seriesBarDistance: 10,
-		reverseData: true,
-		width: 1000,
-		height: 2000,
-		plugins: [
-			Chartist.plugins.ctTargetLine({
-				value: 3,
-				axis: 'y'
-			}),
-			Chartist.plugins.ctTargetLine({
-				value: 2,
-				axis: 'y'
-			})
-		],
-		axisY: {
-			onlyInteger: true
+	var ctx = document.getElementById('myChart').getContext('2d');
+
+	/*Chart.types.Line.extend({
+		name: "myChart",
+		initialize: function() {
+			Chart.types.Line.prototype.initialize.apply(this, arguments);
+		},
+		draw: function() {
+			Chart.types.Line.prototype.draw.apply(this, arguments);
+
+			var point = this.datasets[0].points[this.options.lineAtIndex]
+			var scale = this.scale
+			console.log(this);
+
+			// draw line
+			this.chart.ctx.beginPath();
+			this.chart.ctx.moveTo(scale.startPoint + 12, point.y);
+			this.chart.ctx.strokeStyle = '#ff0000';
+			this.chart.ctx.lineTo(this.chart.width, point.y);
+			this.chart.ctx.stroke();
+
+			// write TODAY
+			this.chart.ctx.textAlign = 'center';
+			this.chart.ctx.fillText("TODAY", scale.startPoint + 35, point.y + 10);
 		}
-	};
-
-	var chart = new Chartist.Line('.ct-chart', data, options);
-
-	/*chart.on('created', function(context) {
-		var htmlOffset = document.getElementsByClassName('ct-end')[0].innerHTML;
-		xOffset = +htmlOffset;
-		console.log(xOffset);
 	});*/
 
+	var chart = new Chart(ctx, {
+		// The type of chart we want to create
+		type: 'line',
 
-	chart.on('draw', function(data) {
-		if (data.type === 'line') {
-			data.element.animate({
-				y1: {
-					dur: 1000,
-					from: data.y1,
-					to: data.y2,
-					easing: Chartist.Svg.Easing.easeOutQuint
-				},
-				opacity: {
-					dur: 1000,
-					from: 0,
-					to: 1,
-					easing: Chartist.Svg.Easing.easeOutQuint
-				},
-			});
+		// The data for our dataset
+		data: {
+			labels: dataLabels,
+			datasets: [{
+				label: 'Average Hero Sentiment',
+				fill: false,
+				borderColor: "#C6EB98",
+				// lineTension: 0.1,
+				data: avgHeroSent
+			}, {
+				label: 'Hero Tweet Sentiment',
+				fill: false,
+				borderColor: "#79BD8F",
+				// lineTension: 0.1,
+				data: heroSent
+			}]
+		},
+
+		// Configuration options go here
+		options: {
+			annotation: {
+				annotations: [{
+					type: 'line',
+					mode: 'horizontal',
+					scaleID: 'y-axis-0',
+					value: analysis['Average User Sentiment'],
+					borderColor: '#ff8080',
+					borderDash: [4, 4],
+					borderWidth: 2,
+					label: {
+						enabled: true,
+						position: "right",
+						yPadding: 4,
+						fontSize: 11,
+						content: 'User\'sAvgSent'
+					}
+				}, {
+					type: 'line',
+					mode: 'horizontal',
+					scaleID: 'y-axis-0',
+					value: analysis['User Tweet Sentiment'],
+					borderColor: '#00A288',
+					borderDash: [4, 4],
+					borderWidth: 2,
+					label: {
+						enabled: true,
+						fontSize: 11,
+						position: "right",
+						yPadding: 4,
+						content: 'User\'sLastTweetSent'
+					}
+				}]
+			}
 		}
 	});
 }
