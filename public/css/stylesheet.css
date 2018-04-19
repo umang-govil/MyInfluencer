@@ -1,0 +1,17 @@
+.ct-target-line {
+	stroke: blue;
+	stroke-width: 2px;
+	stroke-dasharray: 4px;
+	shape-rendering: crispEdges;
+}
+
+#chart {
+	display: none;
+}
+
+/* .ct-target-line2 {
+	stroke: black;
+	stroke-width: 2px;
+	stroke-dasharray: 4px;
+	shape-rendering: crispEdges;
+} */
