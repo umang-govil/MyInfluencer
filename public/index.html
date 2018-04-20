@@ -6,6 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>InfluenceCircle</title>
 	<link rel="stylesheet" href="css/bulma.min.css">
+	<link rel="stylesheet" href="css/stylesheet.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
 	<style>
 		html, body {
@@ -45,15 +46,19 @@
 				</div>
 			</div>
 			<center>
-			<div id='chart'>
-				<canvas id="myChart"></canvas>
-			</div>
+				<div class="box" id="chart-box">
+					<div id='chart' class="ct-chart">
+						<div class="title">Average vs Most similar Hero Tweet Sentiment</div>
+					</div>
+				</div>
+				<div id="json" class="box has-text-left">
+					<div class="title">Influence Data</div>
+				</div>
 			</center>
 		</div>
 	</div>
 	<script src="js/script.js" type="text/javascript"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-	<script src="js/Chart.bundle.js" type="text/javascript"></script>
-	<script src="js/chartjs-plugin-annotation.js" type="text/javascript"></script>
+	<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+	<script src="js/chartist-goal-line.js" type="text/javascript"></script>
 </body>
 </html>
