@@ -32,33 +32,18 @@ let analysis = '';
 
 function getResult(userName) {
 	return new Promise(function(resolve, reject) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					analysis = xhttp.responseText;
-					analysisJSON = JSON.parse(analysis);
-					let result = document.getElementById('result');
-					let resultHTML = '<div class="box"><div class="title">Hey @' + userName + '</div><div class="content"><p>Your profile\'s average Sentiment is ' + Math.round(analysisJSON['Average User Sentiment'] * 100) / 100 + '</p>';
-					resultHTML += '<p>Your last Tweet\'s Sentiment is ' + Math.round(analysisJSON['User Tweet Sentiment'] * 100) / 100 + '</p>';
-					let resultHTML = '<div class="box"><div class="title">Hey @' + userName + '</div><div class="content"><p>Your profile\'s average Sentiment is ' + Math.round(analysisJSON['Average User Sentiment'] * 100) / 100 + '</p>';
-					resultHTML += '<p>Your last Tweet\'s Sentiment is ' + Math.round(analysisJSON['User Tweet Sentiment'] * 100) / 100 + '</p>';
-					let max = -999;
-					let maxInfluence, flag = 1;
-					for (var i in analysisJSON['Average Hero Sentiment']) {
-						flag = 1;
-						if (0 > analysisJSON['Influence'][i]['normalized']) {
-							flag = -1;
-						}
-						if (max < (analysisJSON['Influence'][i]['normalized'] * flag * 100) / 100) {
-							max = Math.round(analysisJSON['Influence'][i]['normalized'] * flag * 100) / 100;
-							maxInfluence = i + ' has the biggest influence on you with a normalized influence score of ' + max;
-						}
-						console.log(analysisJSON['Hero Tweet Sentiment'][i]);
-					}
-					resultHTML += '<p>' + maxInfluence + '</p></div></div>';
-					result.innerHTML += resultHTML;
-					createChart(analysis);
-					document.getElementById('json').innerHTML += '<pre>' + JSON.stringify(analysisJSON['Influence'], undefined, 2) + '</pre>';
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				analysis = xhttp.responseText;
+				analysisJSON = JSON.parse(analysis);
+				let result = document.getElementById('result');
+				let resultHTML = '<div class="box"><div class="title">Hey @' + userName + '</div><div class="content"><p>Your profile\'s average Sentiment is ' + Math.round(analysisJSON['Average User Sentiment'] * 100) / 100 + '</p>';
+				resultHTML += '<p>Your last Tweet\'s Sentiment is ' + Math.round(analysisJSON['User Tweet Sentiment'] * 100) / 100 + '</p>';
+				let max = -999;
+				let maxInfluence, flag = 1;
+				for (var i in analysisJSON['Average Hero Sentiment']) {
+					flag = 1;
 					if (0 > analysisJSON['Influence'][i]['normalized']) {
 						flag = -1;
 					}
@@ -74,7 +59,9 @@ function getResult(userName) {
 				document.getElementById('json').innerHTML += '<pre>' + JSON.stringify(analysisJSON['Influence'], undefined, 2) + '</pre>';
 				resolve(1);
 			}
-		}; xhttp.open("GET", "api/result/" + userName, true); xhttp.send();
+		};
+		xhttp.open("GET", "api/result/" + userName, true);
+		xhttp.send();
 	});
 }
 
