@@ -1,20 +1,7 @@
-.ct-target-line {
-	stroke: blue;
-	stroke-width: 2px;
-	stroke-dasharray: 4px;
-	shape-rendering: crispEdges;
-}
-
-#chart-box, #json {
+#chart {
 	display: none;
 }
 
-#chart {
-	overflow-x: scroll;
+#json {
+	display: none;
 }
-/* .ct-target-line2 {
-	stroke: black;
-	stroke-width: 2px;
-	stroke-dasharray: 4px;
-	shape-rendering: crispEdges;
-} */
